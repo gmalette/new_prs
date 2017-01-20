@@ -19,5 +19,13 @@ describe NewPrs::Actions::SeedUser do
 
       expect{ described_class.seed_user(login: "gmalette") }.not_to change{ NewPrs::User.count }
     end
+
+    it "raises if the user is nil" do
+      expect(NewPrs::Actions::FetchUser)
+        .to(receive(:fetch_user).with(login: "gmalette"))
+        .and_return(nil)
+
+      expect{ described_class.seed_user(login: "gmalette") }.to raise_error("User not found: gmalette")
+    end
   end
 end

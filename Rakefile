@@ -7,20 +7,32 @@ RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 namespace :seed do
-  task :user do
-    print "Login: "
-    login = STDIN.gets.strip
+  def use_stdout_logging
     logger = ActiveRecord::Base.logger
 
     begin
       ActiveRecord::Base.logger = Logger.new(STDOUT)
-      NewPrs::Actions::SeedUser.seed_user(login: login)
+      yield
     ensure
       ActiveRecord::Base.logger = logger
     end
   end
 
+  task :user do
+    print "Login: "
+    login = STDIN.gets.strip
+
+    use_stdout_logging do
+      NewPrs::Actions::SeedUser.seed_user(login: login)
+    end
+  end
+
   task :initial do
+    use_stdout_logging do
+      ENV["SEED_USER_LOGINS"].split(",").map(&:strip).each do |login|
+        NewPrs::Actions::SeedUser.seed_user(login: login)
+      end
+    end
   end
 
   task default: :initial

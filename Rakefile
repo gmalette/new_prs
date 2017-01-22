@@ -27,11 +27,29 @@ namespace :seed do
     end
   end
 
+  desc "Seed the initial uses from ENV"
   task :initial do
     use_stdout_logging do
-      ENV["SEED_USER_LOGINS"].split(",").map(&:strip).each do |login|
+      ENV["WATCHED_USER_LOGINS"].split(",").map(&:strip).each do |login|
         NewPrs::Actions::SeedUser.seed_user(login: login)
       end
+      ENV["WATCHED_REPOS"].split(",").map(&:strip).each do |repo|
+        owner, name = repo.split("/")
+        NewPrs::Repository.where(owner: owner, name: name).first_or_create!
+      end
+    end
+  end
+
+  desc "Update Pull Requests"
+  task :update do
+    watched_users = NewPrs::User.all.map { |user| [user.graphql_id, user] }.to_h
+    repo = NewPrs::Repository.first
+
+    use_stdout_logging do
+      NewPrs::Actions::UpdatePullRequests.update_pull_requests(
+        watched_users: watched_users,
+        repo: repo,
+      )
     end
   end
 

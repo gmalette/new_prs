@@ -9,9 +9,14 @@ module NewPrs
   DB_FILE = File.join(Dir.home, ".new_prs.sqlite3")
   require "new_prs/record"
   require "new_prs/user"
+  require "new_prs/cursor"
+  require "new_prs/repository"
+  require "new_prs/pull_request"
   require "new_prs/github_client"
   require "new_prs/actions/fetch_user"
   require "new_prs/actions/seed_user"
+  require "new_prs/actions/fetch_pull_requests"
+  require "new_prs/actions/update_pull_requests"
 
   ActiveRecord::Base.establish_connection(
     adapter: "sqlite3",

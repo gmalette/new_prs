@@ -10,7 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(version: 4) do
+
+  create_table "cursors", force: :cascade do |t|
+    t.string "resource",   null: false
+    t.string "graphql_id", null: false
+    t.index ["resource"], name: "index_cursors_on_resource", unique: true
+  end
+
+  create_table "pull_requests", force: :cascade do |t|
+    t.integer "user_id",       null: false
+    t.integer "repository_id", null: false
+    t.string  "title",         null: false
+    t.boolean "seen",          null: false
+    t.string  "graphql_id",    null: false
+    t.integer "number",        null: false
+    t.string  "state",         null: false
+    t.string  "path",          null: false
+    t.index ["graphql_id"], name: "index_pull_requests_on_graphql_id", unique: true
+  end
+
+  create_table "repositories", force: :cascade do |t|
+    t.string "owner", null: false
+    t.string "name",  null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "login",      null: false

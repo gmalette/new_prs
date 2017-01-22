@@ -13,8 +13,8 @@ module NewPrs
       private_constant :Query
 
       def self.fetch_user(login:)
-        resp = GithubClient.query(Query, variables: { login: login })
-        resp.data.user
+        response = GithubClient.query(Query, variables: { login: login })
+        response.data.user
       end
     end
   end

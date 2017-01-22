@@ -1,0 +1,16 @@
+class CreatePullRequests < ActiveRecord::Migration
+  def change
+    create_table :pull_requests do |t|
+      t.references(:user, null: false)
+      t.references(:repository, null: false)
+      t.string(:title, null: false)
+      t.boolean(:seen, null: false)
+      t.string(:graphql_id, null: false)
+      t.integer(:number, null: false)
+      t.string(:state, null: false)
+      t.string(:path, null: false)
+
+      t.index(:graphql_id, unique: true)
+    end
+  end
+end

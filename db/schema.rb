@@ -19,14 +19,15 @@ ActiveRecord::Schema.define(version: 4) do
   end
 
   create_table "pull_requests", force: :cascade do |t|
-    t.integer "user_id",       null: false
-    t.integer "repository_id", null: false
-    t.string  "title",         null: false
-    t.boolean "seen",          null: false
-    t.string  "graphql_id",    null: false
-    t.integer "number",        null: false
-    t.string  "state",         null: false
-    t.string  "path",          null: false
+    t.integer  "user_id",           null: false
+    t.integer  "repository_id",     null: false
+    t.string   "title",             null: false
+    t.boolean  "seen",              null: false
+    t.string   "graphql_id",        null: false
+    t.integer  "number",            null: false
+    t.string   "state",             null: false
+    t.string   "path",              null: false
+    t.datetime "github_created_at", null: false
     t.index ["graphql_id"], name: "index_pull_requests_on_graphql_id", unique: true
   end
 

@@ -38,6 +38,7 @@ describe NewPrs::Actions::UpdatePullRequests do
         number: "10",
         state: "open",
         path: "titi/toto/10",
+        createdAt: DateTime.now,
       )
       expect(NewPrs::Actions::FetchPullRequests)
         .to(receive(:fetch_pull_requests))

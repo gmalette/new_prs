@@ -22,6 +22,7 @@ module NewPrs
             seen: false,
             number: pull_request.number,
             state: pull_request.state,
+            github_created_at: pull_request.createdAt,
             path: [repo.owner, repo.name, "pull", pull_request.number].join("/"),
           )
         end

@@ -9,6 +9,7 @@ class CreatePullRequests < ActiveRecord::Migration
       t.integer(:number, null: false)
       t.string(:state, null: false)
       t.string(:path, null: false)
+      t.datetime(:github_created_at, null: false)
 
       t.index(:graphql_id, unique: true)
     end

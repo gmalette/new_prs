@@ -2,7 +2,8 @@ require "new_prs/version"
 require "active_record"
 require "graphql/client"
 require "graphql/client/http"
-require 'dotenv/load'
+require "dotenv/load"
+require "highline"
 require "pry"
 
 module NewPrs
@@ -17,6 +18,9 @@ module NewPrs
   require "new_prs/actions/seed_user"
   require "new_prs/actions/fetch_pull_requests"
   require "new_prs/actions/update_pull_requests"
+  require "new_prs/cli/main"
+  require "new_prs/cli/user"
+  require "new_prs/cli/pull_request"
 
   ActiveRecord::Base.establish_connection(
     adapter: "sqlite3",

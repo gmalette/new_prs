@@ -12,6 +12,7 @@ module NewPrs
                   number
                   id
                   state
+                  createdAt
                   author {
                     id
                   }

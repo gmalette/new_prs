@@ -16,6 +16,16 @@ module NewPrs
                   author {
                     id
                   }
+                  reviews(first: 100) {
+                    edges {
+                      node {
+                        state
+                        author {
+                          id
+                        }
+                      }
+                    }
+                  }
                 }
                 cursor
               }

@@ -37,6 +37,7 @@ namespace :seed do
         owner, name = repo.split("/")
         NewPrs::Repository.where(owner: owner, name: name).first_or_create!
       end
+      NewPrs::Actions::SeedSelf.seed_self
     end
   end
 

@@ -12,10 +12,14 @@
 
 ActiveRecord::Schema.define(version: 4) do
 
-  create_table "cursors", force: :cascade do |t|
-    t.string "resource",   null: false
-    t.string "graphql_id", null: false
-    t.index ["resource"], name: "index_cursors_on_resource", unique: true
+  create_table "pull_request_reviews", force: :cascade do |t|
+    t.integer  "pull_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.string   "state",           null: false
+    t.integer  "score",           null: false
+    t.string   "comment",         null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "pull_requests", force: :cascade do |t|
@@ -28,19 +32,25 @@ ActiveRecord::Schema.define(version: 4) do
     t.string   "state",             null: false
     t.string   "path",              null: false
     t.datetime "github_created_at", null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.index ["graphql_id"], name: "index_pull_requests_on_graphql_id", unique: true
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.string "owner", null: false
-    t.string "name",  null: false
+    t.string   "owner",                    null: false
+    t.string   "name",                     null: false
+    t.string   "last_pull_request_cursor"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "login",      null: false
-    t.string   "graphql_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "login",                      null: false
+    t.string   "graphql_id",                 null: false
+    t.boolean  "myself",     default: false, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.index ["graphql_id"], name: "index_users_on_graphql_id", unique: true
   end
 

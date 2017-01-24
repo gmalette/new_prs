@@ -2,15 +2,15 @@ module NewPrs
   module Actions
     class UpdatePullRequests
       def self.update_pull_requests(watched_users:, repo:)
-        cursor = NewPrs::Cursor.where(resource: "pull_requests").first_or_initialize
+        cursor = repo.last_pull_request_cursor
         puts "Starting PR update at #{cursor.graphql_id.inspect}"
 
         NewPrs::Actions::FetchPullRequests.fetch_pull_requests(
           owner: repo.owner,
           name: repo.name,
-          cursor: cursor.graphql_id,
+          cursor: cursor,
         ) do |pull_request, pr_cursor|
-          cursor.graphql_id = pr_cursor
+          repo.last_pull_request_cursor = pr_cursor
           next unless author = watched_users[pull_request.author&.id]
           next if NewPrs::PullRequest.where(graphql_id: pull_request.id).exists?
 
@@ -27,7 +27,7 @@ module NewPrs
           )
         end
       ensure
-        cursor.save if cursor.graphql_id_changed?
+        repo.save if cursor.last_pull_request_cursor_changed?
       end
     end
   end

@@ -1,7 +1,7 @@
 module NewPrs
   module Actions
     class FetchUser
-      Query = GithubClient.parse(<<~GRAPHQL)
+      UserQuery = GithubClient.parse(<<~GRAPHQL)
         query($login: String!) {
           user(login: $login) {
             id
@@ -10,11 +10,25 @@ module NewPrs
         }
       GRAPHQL
 
-      private_constant :Query
+      SelfQuery = GithubClient.parse(<<~GRAPHQL)
+        query {
+          viewer{
+            id
+            login
+          }
+        }
+      GRAPHQL
+
+      private_constant :UserQuery, :SelfQuery
 
       def self.fetch_user(login:)
-        response = GithubClient.query(Query, variables: { login: login })
+        response = GithubClient.query(UserQuery, variables: { login: login })
         response.data.user
+      end
+
+      def self.fetch_self
+        response = GithubClient.query(SelfQuery)
+        response.data.viewer
       end
     end
   end

@@ -2,30 +2,13 @@ module NewPrs
   module Actions
     class FetchPullRequests
       Query = GithubClient.parse(<<~GRAPHQL)
-        query($owner: String!, $name: String!, $after: String) {
+        query($owner: String!, $name: String!, $after_pull_request: String, $after_review_id: String) {
           repository(owner: $owner, name: $name) {
             id
-            pullRequests(first: 100, after: $after) {
+            pullRequests(first: 100, after: $after_pull_request) {
               edges {
                 node {
-                  title
-                  number
-                  id
-                  state
-                  createdAt
-                  author {
-                    id
-                  }
-                  reviews(first: 100) {
-                    edges {
-                      node {
-                        state
-                        author {
-                          id
-                        }
-                      }
-                    }
-                  }
+                  ...NewPrs::Actions::UpdatePullRequest::PullRequestFragment
                 }
                 cursor
               }
@@ -46,7 +29,7 @@ module NewPrs
         while has_next_page do
           response = GithubClient.query(
             Query,
-            variables: { owner: owner, name: name, after: cursor },
+            variables: { owner: owner, name: name, after_pull_request: cursor },
           )
 
           if response.data.nil?
@@ -61,11 +44,14 @@ module NewPrs
           end
 
           has_next_page = response.data.repository.pullRequests.pageInfo.hasNextPage
-          cursor = response.data.repository.pullRequests.edges.last.cursor
+          pull_request_edges = response.data.repository.pullRequests.edges
+          puts "Found #{pull_request_edges.count} pull requests"
+          return if pull_request_edges.empty?
+          cursor = pull_request_edges.last.cursor
 
-          puts "Found #{response.data.repository.pullRequests.edges.count} pull requests"
           response.data.repository.pullRequests.edges.each do |edge|
-            yield(edge.node, cursor)
+            pull_request = NewPrs::Actions::UpdatePullRequest::PullRequestFragment.new(edge.node)
+            yield(pull_request, cursor)
           end
         end
       end

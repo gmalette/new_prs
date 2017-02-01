@@ -47,7 +47,8 @@ namespace :seed do
     repo = NewPrs::Repository.first
 
     use_stdout_logging do
-      NewPrs::Actions::UpdatePullRequests.update_pull_requests(
+      NewPrs::Actions::UpdateExistingPullRequests.update_existing_pull_requests
+      NewPrs::Actions::FetchNewPullRequests.fetch_new_pull_requests(
         watched_users: watched_users,
         repo: repo,
       )

@@ -4,9 +4,11 @@ class CreatePullRequestReviews < ActiveRecord::Migration
       t.references(:pull_request, null: false)
       t.references(:user, null: false)
       t.string(:state, null: false)
-      t.integer(:score, null: false)
-      t.string(:comment, null: false)
+      t.string(:graphql_id, null: false)
+      t.integer(:comment_count, null: false, default: 0)
       t.timestamps(null: false)
+
+      t.index(:graphql_id, unique: true)
     end
   end
 end

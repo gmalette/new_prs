@@ -3,20 +3,19 @@ require "spec_helper"
 describe NewPrs::Actions::FetchPullRequests do
   describe ":fetch_pull_requests" do
     it "queries Github with the options and yields results" do
-      node = double
       cursor = double
-      edges = [double(node: node, cursor: cursor)]
+      edges = [double(node: {}, cursor: cursor)]
       stub_graphql_fetch(pages: [edges])
 
       expect do |block|
         described_class.fetch_pull_requests(owner: "Shopify", name: "shopify", &block)
-      end.to(yield_with_args(node, cursor))
+      end.to(yield_with_args(NewPrs::Actions::UpdatePullRequest::PullRequestFragment.type, cursor))
     end
 
     it "queries Github in a loop if there are more pages" do
       pages = [
-        [double(node: double, cursor: double)],
-        [double(node: double, cursor: double)],
+        [double(node: {}, cursor: double)],
+        [double(node: {}, cursor: double)],
       ]
       stub_graphql_fetch(pages: pages)
 
@@ -38,7 +37,7 @@ describe NewPrs::Actions::FetchPullRequests do
       .to(receive(:query))
       .with(
         NewPrs::Actions::FetchPullRequests::Query,
-        variables: { owner: "Shopify", name: "shopify", after: anything },
+        variables: { owner: "Shopify", name: "shopify", after_pull_request: anything },
       )
       .and_return(*responses)
   end

@@ -13,13 +13,14 @@
 ActiveRecord::Schema.define(version: 4) do
 
   create_table "pull_request_reviews", force: :cascade do |t|
-    t.integer  "pull_request_id", null: false
-    t.integer  "user_id",         null: false
-    t.string   "state",           null: false
-    t.integer  "score",           null: false
-    t.string   "comment",         null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "pull_request_id",             null: false
+    t.integer  "user_id",                     null: false
+    t.string   "state",                       null: false
+    t.string   "graphql_id",                  null: false
+    t.integer  "comment_count",   default: 0, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.index ["graphql_id"], name: "index_pull_request_reviews_on_graphql_id", unique: true
   end
 
   create_table "pull_requests", force: :cascade do |t|

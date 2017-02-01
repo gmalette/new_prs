@@ -28,8 +28,8 @@ describe NewPrs::Actions::FetchNewPullRequests do
     it "creates PullRequests and PullRequestReviews with yielded values if it's from a watched user" do
       user = create(:user)
       pull_request = NewPrs::Actions::UpdatePullRequest::PullRequestFragment.new(
-        "id" => "1111",
-        "author" => { "id" => user.graphql_id },
+        "id" => 1111,
+        "author" => { "id" => user.graphql_id, "login" => user.login },
         "title" => "awesome pull request",
         "number" => 10,
         "state" => "open",
@@ -39,9 +39,11 @@ describe NewPrs::Actions::FetchNewPullRequests do
           "edges" => [
             {
               "node" => {
+                "id" => 2222,
                 "state" => "APPROVED",
                 "author" => {
                   "id" => user.graphql_id,
+                  "login" => user.login,
                 },
                 "comments" => {
                   "totalCount" => 0,
@@ -61,9 +63,10 @@ describe NewPrs::Actions::FetchNewPullRequests do
           watched_users: { user.graphql_id => user },
           repo: repository,
         )
-      }
-        .to(change { NewPrs::PullRequest.count }.by(1))
-        .and(change { NewPrs::PullRequestReviews.count }.by(1))
+      }.to(
+        change { NewPrs::PullRequest.count }.by(1)
+        .and(change { NewPrs::PullRequestReview.count }.by(1))
+      )
     end
 
     it "doesn't create PullRequests if it's not a watched user" do

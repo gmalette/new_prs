@@ -41,6 +41,8 @@ RSpec.configure do |config|
 end
 
 FactoryGirl.define do
+  sequence(:graphql_id)
+
   factory :user, class: NewPrs::User do
     login("gmalette")
     graphql_id("user_graphql_id")
@@ -71,18 +73,21 @@ FactoryGirl.define do
     id("abcd")
     state("OPEN")
     createdAt(DateTime.now)
-    author({ "id" => "abcd1234" })
-    reviews({
-      "edges" => [
-        {
-          "node" => {
-            "state" => "OPEN",
-            "author" => { "id" => 1234, },
-            "comments" => { "totalCount" => 1 },
+    author { { "id" => generate(:graphql_id), "login" => "toto" } }
+    reviews {
+      {
+        "edges" => [
+          {
+            "node" => {
+              "id" => generate(:graphql_id),
+              "state" => "OPEN",
+                "author" => { "id" => 1234, "login" => "toto" },
+                "comments" => { "totalCount" => 1 },
+            },
           },
-        },
-      ],
-    })
+        ],
+      }
+    }
 
     initialize_with { attributes.stringify_keys }
   end

@@ -15,9 +15,10 @@ describe NewPrs::Actions::UpdatePullRequest do
           pull_request_node: pull_request_node,
           author: user,
         )
-      }
-        .to(change { NewPrs::PullRequest.count }.by(1))
+      }.to(
+        change { NewPrs::PullRequest.count }.by(1)
         .and(change { NewPrs::PullRequestReview.count }.by(1))
+      )
     end
 
     it "updates pull requests when already created" do

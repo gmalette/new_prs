@@ -1,14 +1,13 @@
 module NewPrs
   module Actions
     class FindOrCreateUser
-      def self.find_or_create_user(login:, graphql_id:, myself: nil)
+      def self.find_or_create_user(graphql_id:, **attrs)
         user = NewPrs::User
-          .where(login: login, graphql_id: graphql_id)
-          .first_or_create!
+          .where(graphql_id: graphql_id)
+          .first_or_initialize
 
-        return user if myself.nil?
+        user.update!(**attrs)
 
-        user.update(myself: myself)
         user
       end
     end

@@ -1,7 +1,20 @@
 module NewPrs
+  class LastResponseProxy
+    def initialize(client, http)
+      @client = client
+      @http = http
+    end
+
+    def request(*a)
+      @client.last_response = @http.request(*a)
+    end
+  end
+
   schema_cache_path = Pathname.new("./tmp/github_graphql_schema.json").expand_path
 
   adapter = GraphQL::Client::HTTP.new("https://api.github.com/graphql") do
+    attr_accessor :last_response
+
     def headers(context)
       unless token = ENV["GITHUB_ACCESS_TOKEN"]
         fail "Missing GitHub access token"
@@ -10,6 +23,10 @@ module NewPrs
       {
         "Authorization" => "Bearer #{token}"
       }
+    end
+
+    def connection
+      LastResponseProxy.new(self, super)
     end
   end
 

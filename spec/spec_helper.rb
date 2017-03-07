@@ -45,7 +45,7 @@ FactoryGirl.define do
 
   factory :user, class: NewPrs::User do
     login("gmalette")
-    graphql_id("user_graphql_id")
+    graphql_id { generate(:graphql_id) }
     myself(false)
   end
 
@@ -64,7 +64,8 @@ FactoryGirl.define do
     number(1234)
     state("OPEN")
     path("gmalette/new_prs/pull/1")
-    github_created_at { DateTime.now }
+    github_created_at { DateTime.now.iso8601 }
+    github_updated_at { DateTime.now.iso8601 }
   end
 
   factory :pull_request_node, class: NewPrs::Actions::UpdatePullRequest::PullRequestFragment do
@@ -72,7 +73,8 @@ FactoryGirl.define do
     number(1234)
     id("abcd")
     state("OPEN")
-    createdAt(DateTime.now)
+    createdAt(DateTime.now.iso8601)
+    updatedAt(DateTime.now.iso8601)
     author { { "id" => generate(:graphql_id), "login" => "toto" } }
     reviews {
       {
@@ -81,8 +83,8 @@ FactoryGirl.define do
             "node" => {
               "id" => generate(:graphql_id),
               "state" => "OPEN",
-                "author" => { "id" => 1234, "login" => "toto" },
-                "comments" => { "totalCount" => 1 },
+              "author" => { "id" => 1234, "login" => "toto" },
+              "comments" => { "totalCount" => 1 },
             },
           },
         ],

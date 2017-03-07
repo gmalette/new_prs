@@ -32,16 +32,7 @@ module NewPrs
             variables: { owner: owner, name: name, after_pull_request: cursor },
           )
 
-          if response.data.nil?
-            if response.errors.any?
-              puts "Aborting query to fetch new pull requests because of errors:"
-              puts "  #{response.errors.messages.inspect}"
-            else
-              puts "Aborting query to fetch new pull requests, unknown reason"
-            end
-
-            return
-          end
+          NewPrs::GraphQLThrottle.examine(response)
 
           has_next_page = response.data.repository.pullRequests.pageInfo.hasNextPage
           pull_request_edges = response.data.repository.pullRequests.edges

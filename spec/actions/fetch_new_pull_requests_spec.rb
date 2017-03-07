@@ -35,6 +35,7 @@ describe NewPrs::Actions::FetchNewPullRequests do
         "state" => "open",
         "path" => "titi/toto/10",
         "createdAt" => DateTime.now,
+        "updatedAt" => DateTime.now,
         "reviews" => {
           "edges" => [
             {

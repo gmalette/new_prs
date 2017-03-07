@@ -1,4 +1,4 @@
-class CreatePullRequestReviews < ActiveRecord::Migration
+class CreatePullRequestReviews < ActiveRecord::Migration[5.0]
   def change
     create_table :pull_request_reviews do |t|
       t.references(:pull_request, null: false)

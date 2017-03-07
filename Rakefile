@@ -31,7 +31,7 @@ namespace :seed do
   task :initial do
     use_stdout_logging do
       ENV["WATCHED_USER_LOGINS"].split(",").map(&:strip).each do |login|
-        NewPrs::Actions::SeedUser.seed_user(login: login)
+        NewPrs::Actions::SeedUser.seed_user(login: login, watched: true)
       end
       ENV["WATCHED_REPOS"].split(",").map(&:strip).each do |repo|
         owner, name = repo.split("/")
@@ -43,7 +43,7 @@ namespace :seed do
 
   desc "Update Pull Requests"
   task :update do
-    watched_users = NewPrs::User.all.map { |user| [user.graphql_id, user] }.to_h
+    watched_users = NewPrs::User.where(watched: true).map { |user| [user.graphql_id, user] }.to_h
     repo = NewPrs::Repository.first
 
     use_stdout_logging do

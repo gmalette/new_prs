@@ -36,5 +36,19 @@ describe NewPrs::Actions::SeedUser do
 
       expect{ described_class.seed_user(login: "gmalette") }.to raise_error("User not found: gmalette")
     end
+
+    it "accepts assignment attributes" do
+      user = NewPrs::Actions::FetchUser::UserFragment.new(
+        "login" => "gmalette",
+        "id" => "1234",
+      )
+
+      expect(NewPrs::Actions::FetchUser)
+        .to(receive(:fetch_user).with(login: "gmalette"))
+        .and_return(user)
+
+      created_user = described_class.seed_user(login: "gmalette", watched: true)
+      expect(created_user.watched).to(be(true))
+    end
   end
 end

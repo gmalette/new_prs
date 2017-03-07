@@ -1,4 +1,4 @@
-class CreatePullRequests < ActiveRecord::Migration
+class CreatePullRequests < ActiveRecord::Migration[5.0]
   def change
     create_table :pull_requests do |t|
       t.references(:user, null: false)
@@ -10,6 +10,7 @@ class CreatePullRequests < ActiveRecord::Migration
       t.string(:state, null: false)
       t.string(:path, null: false)
       t.datetime(:github_created_at, null: false)
+      t.datetime(:github_updated_at, null: false)
       t.timestamps(null: false)
 
       t.index(:graphql_id, unique: true)

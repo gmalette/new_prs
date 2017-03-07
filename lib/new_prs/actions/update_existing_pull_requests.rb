@@ -22,6 +22,8 @@ module NewPrs
             variables: { ids: prs_by_id.keys },
           )
 
+          NewPrs::GraphQLThrottle.examine(response)
+
           response.data.nodes.each do |pull_request_node|
             pull_request_node = NewPrs::Actions::UpdatePullRequest::PullRequestFragment.new(pull_request_node)
             pull_request = prs_by_id[pull_request_node.id]

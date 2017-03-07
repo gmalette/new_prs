@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 5) do
 
   create_table "pull_request_reviews", force: :cascade do |t|
     t.integer  "pull_request_id",             null: false
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 4) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.index ["graphql_id"], name: "index_pull_request_reviews_on_graphql_id", unique: true
+    t.index ["pull_request_id"], name: "index_pull_request_reviews_on_pull_request_id"
+    t.index ["user_id"], name: "index_pull_request_reviews_on_user_id"
   end
 
   create_table "pull_requests", force: :cascade do |t|
@@ -33,9 +35,12 @@ ActiveRecord::Schema.define(version: 4) do
     t.string   "state",             null: false
     t.string   "path",              null: false
     t.datetime "github_created_at", null: false
+    t.datetime "github_updated_at", null: false
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.index ["graphql_id"], name: "index_pull_requests_on_graphql_id", unique: true
+    t.index ["repository_id"], name: "index_pull_requests_on_repository_id"
+    t.index ["user_id"], name: "index_pull_requests_on_user_id"
   end
 
   create_table "repositories", force: :cascade do |t|
@@ -46,10 +51,23 @@ ActiveRecord::Schema.define(version: 4) do
     t.datetime "updated_at",               null: false
   end
 
+  create_table "review_reviews", force: :cascade do |t|
+    t.integer  "pull_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.integer  "score",           null: false
+    t.string   "comment"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["pull_request_id", "user_id"], name: "index_review_reviews_on_pull_request_id_and_user_id", unique: true
+    t.index ["pull_request_id"], name: "index_review_reviews_on_pull_request_id"
+    t.index ["user_id"], name: "index_review_reviews_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "login",                      null: false
     t.string   "graphql_id",                 null: false
     t.boolean  "myself",     default: false, null: false
+    t.boolean  "watched",    default: false, null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.index ["graphql_id"], name: "index_users_on_graphql_id", unique: true

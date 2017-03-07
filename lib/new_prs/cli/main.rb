@@ -20,9 +20,9 @@ module NewPrs
           reviewers_menus = pr.pull_request_reviews.map(&:user).uniq.map do |user|
             menu =
               NewPrs::CLI::Menu.new(@cli)
-                .command("1", "Meh") { score_review(@cli, pr, user, -1)}
-                .command("2", "OK") { score_review(@cli, pr, user, 0)}
-                .command("3", "Stellar") { score_review(@cli, pr, user, 1)}
+                .command("1", "Meh") { score_review(@cli, pr, user, -1); :term }
+                .command("2", "OK") { score_review(@cli, pr, user, 0); :term }
+                .command("3", "Stellar") { score_review(@cli, pr, user, 1); :term }
 
             [user.login, menu]
           end
@@ -33,7 +33,7 @@ module NewPrs
           pr_menu =
             NewPrs::CLI::Menu.new(@cli)
               .command("m", "Mark as read") { pr.update(seen: true); :term }
-              .command("s", "Score this review") { review_menu.run }
+              .command("s", "Score this review") { |*a| review_menu.run(*a) }
               .command("o", "open") { system("open", pr.url) }
               .command("q", "Quit") { quit }
 

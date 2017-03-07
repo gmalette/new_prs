@@ -28,7 +28,7 @@ module NewPrs
         while true
           if command_sequence&.empty?
             @cli.say(prompt)
-            command_sequence = @cli.ask("? ").split("")
+            command_sequence = @cli.ask("? ").scan(/\d+|[a-zA-Z]/)
           end
 
           command = command_sequence.shift
@@ -40,6 +40,10 @@ module NewPrs
             return if result == :term
           elsif (menu_index = command.to_i) > 0 && list_items
             puts "Executing index #{menu_index}"
+            if menu_index > list_items.count
+              puts "Item out of bound #{menu_index}"
+              next
+            end
             _title, menu = list_items[menu_index - 1]
             call_next(menu, command_sequence)
             command_sequence = []

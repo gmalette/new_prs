@@ -59,6 +59,12 @@ describe NewPrs::CLI::Menu do
       described_class.new(cli).list(-> { list }).run(["1", "t"])
     end
 
+    it "doesn't crash when accessing item out of bounds" do
+      allow(cli).to(receive(:ask).and_return("3t", ""))
+
+      subject.run
+    end
+
     it "enumerates through lists via each"
   end
 end

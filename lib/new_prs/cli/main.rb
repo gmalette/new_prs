@@ -20,7 +20,7 @@ module NewPrs
           reviewers_menus = pr.pull_request_reviews.map(&:user).uniq.map do |user|
             menu =
               NewPrs::CLI::Menu.new(@cli)
-                .command("1", "Meh") { score_review(@cli, pr, user, -1); :term }
+                .command("1", "WTF") { score_review(@cli, pr, user, -1); :term }
                 .command("2", "OK") { score_review(@cli, pr, user, 0); :term }
                 .command("3", "Stellar") { score_review(@cli, pr, user, 1); :term }
 
@@ -54,7 +54,11 @@ module NewPrs
             NewPrs::CLI::Menu.new(@cli)
               .list(-> { pull_requests_menus(user) }, all: "a")
 
-          ["#{user.login} (#{prs.count})", menu]
+          pr_count_by_state = prs.group_by(&:state).sort.map do |(state, state_prs)|
+            HighLine.color(state_prs.count.to_s, state_color(state))
+          end.join(", ")
+
+          ["#{user.login} (#{pr_count_by_state})", menu]
         end
       end
 
@@ -74,19 +78,20 @@ module NewPrs
       end
 
       def pr_state(pr)
-        color =
-          case pr.state
-          when "MERGED"
-            :rgb_6E5494
-          when "CLOSED"
-            :rgb_BD2C00
-          when "OPEN"
-            :rgb_6CC644
-          else
-            raise "unknown color for #{pr.state}"
-          end
+        HighLine.color(pr.state[0], state_color(pr.state))
+      end
 
-        HighLine.color(pr.state[0], color)
+      def state_color(state)
+        case state
+        when "MERGED"
+          :rgb_6E5494
+        when "CLOSED"
+          :rgb_BD2C00
+        when "OPEN"
+          :rgb_6CC644
+        else
+          raise "unknown color for #{pr.state}"
+        end
       end
     end
   end

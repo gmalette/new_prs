@@ -11,7 +11,8 @@ module NewPrs
 
       def self.update_existing_pull_requests
         pull_requests = NewPrs::PullRequest.all
-          .includes(:user, :repository)
+          .where(state: "OPEN").or(NewPrs::PullRequest.where(state: "MERGED", seen: false))
+                          .includes(:user, :repository)
           .in_groups_of(100)
           .map(&:compact)
 
